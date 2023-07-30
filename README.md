@@ -25,4 +25,4 @@ poetry shell
 make run
 ```
 
-acesssar htpp://localhost:4000/docs
+acesssar: http://localhost:8000/docs
