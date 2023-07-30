@@ -18,7 +18,11 @@ make docker_run
 ```bash
 asdf plugin-add python
 asdf plugin-add poetry https://github.com/asdf-community/asdf-poetry.git
+asdf install
 
 poetry install
 poetry shell
+make run
 ```
+
+acesssar htpp://localhost:4000/docs
