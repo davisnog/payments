@@ -5,10 +5,22 @@ from decimal import Decimal
 from datetime import datetime, date
 
 class BankSlipPaid(BaseModel):
-    debtId: str
-    paidAt: str
+    debtId: int
+    paidAt: datetime
     paidAmount: Decimal
     paidBy: str
+
+    @validator('paidAt', pre=True)
+    def validate_date_format(cls, value):
+        return datetime.strptime(value, '%Y-%m-%d %H:%M:%S')
+
+    @validator('debtId', pre=True)
+    def validate_debt_id(cls, value):
+        return int(value)
+
+    @validator('paidAmount', pre=True)
+    def validate_paid_amount(cls, value):
+        return Decimal(value)
 
 
 class BankSlip(BaseModel):
@@ -48,7 +60,7 @@ async def validate_file_upload(file):
 def validate_file_content(row):
     try:
         BankSlip.model_validate(row, strict=True)
-        return [], row
+        return [], BankSlip(**row).model_dump()
     except ValidationError as exc:
         errors = [{"type": e["type"], "field": " ".join(e["loc"]), "msg": e["msg"]} for e in exc.errors()]
         return errors, None

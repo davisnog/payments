@@ -8,26 +8,29 @@ services:
       dockerfile: Dockerfile.dev
     ports:
       - 8000:8000
-    command: uvicorn app.main:app --reload
+    command: sh startup.sh
     volumes:
-      - ./:/app
+      - ./:/src
     environment:
-      - CELERY_BROKER_URL=redis://redis:6379/0
+      CELERY_BROKER_URL: redis://redis:6379/0
+      DATABASE_URL: postgresql+psycopg://postgres:postgres@postgres:5432/payments
     depends_on:
       - redis
+      - postgres
 
   worker:
     build:
       context: .
       dockerfile: Dockerfile.dev
-    command: celery -A background_tasks.celery worker --loglevel=info
+    command: celery -A app.background_tasks.celery worker --loglevel=info
     volumes:
-      - ./app:/app
+      - ./:/src
     environment:
-      - CELERY_BROKER_URL=redis://redis:6379/0
+      CELERY_BROKER_URL: redis://redis:6379/0
+      DATABASE_URL: postgresql+psycopg://postgres:postgres@postgres:5432/payments
     depends_on:
-      - web
       - redis
+      - postgres
 
   redis:
     image: redis:latest
@@ -42,8 +45,18 @@ services:
     ports:
       - 5556:5555
     environment:
-      - CELERY_BROKER_URL=redis://redis:6379/0
+      CELERY_BROKER_URL: redis://redis:6379/0
     depends_on:
       - web
       - redis
       - worker
+
+  postgres:
+    container_name: postgres-db
+    image: 'postgres:15.3-alpine'
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: payments

@@ -1,8 +1,10 @@
 FROM python:3.11.4-alpine3.18
 
-WORKDIR /app
+RUN apk --update add postgresql-client
 
-COPY ./pyproject.toml /app/pyproject.toml
+WORKDIR /src
+
+COPY ./pyproject.toml /src/pyproject.toml
 
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
