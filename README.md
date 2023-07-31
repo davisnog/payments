@@ -25,4 +25,9 @@ poetry shell
 make run
 ```
 
-acesssar: http://localhost:8000/docs
+acessar: http://localhost:8000/docs
+
+
+#### Documentação arquitetural
+
+![Documentação arquitetural](https://github.com/davisnog/payments/blob/main/images/kanastra-payments.drawio.png?raw=true)
