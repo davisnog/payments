@@ -1,6 +1,6 @@
 from fastapi.exceptions import HTTPException
 
-from pydantic import BaseModel, Field, EmailStr, validator, ValidationError
+from pydantic import BaseModel, Field, EmailStr, validator, ValidationError, field_validator
 from decimal import Decimal
 from datetime import datetime, date
 
@@ -54,8 +54,8 @@ async def validate_file_upload(file):
     if content_type != "text/csv":
         raise HTTPException(status_code=400, detail="Invalid file type, required csv file")
 
-    if file_size > 1 * 1024 * 1024 * 1024:
-        raise HTTPException(status_code=400, detail="File too large, greater than 1GB")
+    if file_size > 1 * 1024:
+        raise HTTPException(status_code=400, detail="File too large, greater than 1MB")
 
 def validate_file_content(row):
     try:

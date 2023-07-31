@@ -1,11 +1,14 @@
-from fastapi import FastAPI, UploadFile, File
-from fastapi.exceptions import HTTPException
+from fastapi import FastAPI, UploadFile, File, Request, status
+from fastapi.exceptions import HTTPException, RequestValidationError
+from fastapi.encoders import jsonable_encoder
+from fastapi.responses import JSONResponse
+
 from celery import chain
+
 
 from io import StringIO
 import csv
 
-from app import create_app
 
 from app.input_request import (
     BankSlipPaid,
@@ -21,7 +24,25 @@ from app.background_tasks import (
     settle_current_account,
 )
 
-app = create_app()
+app = FastAPI()
+
+
+@app.exception_handler(RequestValidationError)
+async def validation_exception_handler(request: Request, exc: RequestValidationError):
+    details = exc.errors()
+    modified_details = []
+    for error in details:
+        modified_details.append(
+            {
+                "loc": error["loc"],
+                "message": error["msg"],
+                "type": error["type"],
+            }
+        )
+    return JSONResponse(
+        status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+        content=jsonable_encoder({"detail": modified_details}),
+    )
 
 
 @app.post("/v1/uploadfile")
@@ -49,7 +70,7 @@ async def create_upload_file(file: UploadFile):
     if errors:
         raise HTTPException(status_code=422, detail=errors)
 
-    return {"filename": file.filename}
+    return {"message": "Uploaded with success {0}".format(file.filename)}
 
 
 @app.post("/v1/webhook")

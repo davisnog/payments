@@ -17,7 +17,8 @@ class ProductionConfig(BaseConfig):
 
 
 class TestingConfig(BaseConfig):
-    pass
+    DATABASE_URL: str = os.environ.get("DATABASE_URL", "postgresql+psycopg://pytest:pytest@localhost:5432/pytest")
+    CELERY_BROKER_URL: str = os.environ.get("CELERY_BROKER_URL", "redis://localhost:6379")
 
 
 @lru_cache()

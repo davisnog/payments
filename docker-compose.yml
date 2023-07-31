@@ -60,3 +60,18 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: payments
+
+  postgres-test:
+    container_name: postgres-db-tes
+    image: 'postgres:15.3-alpine'
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_USER: pytest
+      POSTGRES_PASSWORD: pytest
+      POSTGRES_DB: pytest
+
+  redis-test:
+    image: redis:latest
+    ports:
+      - 6379:6379

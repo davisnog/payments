@@ -14,13 +14,12 @@ def create_line():
 
 
 if __name__ == '__main__':
-    x = range(100)
     field_names= ['name', 'governmentId', 'email', 'debtAmount', 'debtDueDate', 'debtId']
 
     with open('upload_large.csv', 'w') as f:
         writer = csv.DictWriter(f, fieldnames=field_names)
         writer.writeheader()
 
-        for n in x:
+        for n in range(12000):
             row = create_line()
             writer.writerow(row)
