@@ -25,10 +25,11 @@ webhook:
 
 
 docker_run:
-	docker compose up --build
+	docker compose up web dashboard --build
 
 test:
-	pytest tests/main_test.py -vvv --disable-warnings
+	docker compose up -d postgres-test redis-test
+	FASTAPI_CONFIG=testing pytest tests/main_test.py -vvv --disable-warnings
 
 integration_test:
 	docker compose up -d postgres-test redis-test

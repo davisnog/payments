@@ -25,6 +25,12 @@ poetry shell
 make run
 ```
 
+#### Rodando os testes local
+```bash
+make test
+make integration_test
+```
+
 acessar: http://localhost:8000/docs
 
 
